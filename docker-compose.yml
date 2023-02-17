@@ -1,0 +1,34 @@
+version: '3.2'
+services:
+    customer:
+        build:
+            context: customer
+            dockerfile: Dockerfile
+        ports:
+            - 8080:8080
+        environment:
+            spring.datasource.url: "jdbc:postgresql://db:5432/acmebank"
+            spring.datasource.username: ${POSTGRES_USER:-postgres}
+            spring.datasource.password: ${POSTGRES_PASSWORD:-changeme}
+            spring.datasource.driver-class-name: org.postgresql.Driver
+            spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+            spring.jpa.hibernate.ddl-auto: update
+        depends_on:
+            db:
+                condition: service_healthy
+    db:
+        image: postgres:15.2-alpine
+        environment:
+          POSTGRES_USER: ${POSTGRES_USER:-postgres}
+          POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+          PGDATA: /var/lib/postgresql/data/pgdata
+          POSTGRES_DB: acmebank
+        volumes:
+          - ./acmebank-postgres-data:/var/lib/postgresql/data:rw
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+volumes:
+    acmebank-postgres-data:
