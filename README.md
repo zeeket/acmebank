@@ -10,6 +10,7 @@ Bank application demo with Spring Boot Framework & Docker Compose
 
 ### TODO
 - More Exceptions for Customer Service
+- Tests & Jenkinsfile
 - Web Service
 - Transfer Service
 - Admin Service
