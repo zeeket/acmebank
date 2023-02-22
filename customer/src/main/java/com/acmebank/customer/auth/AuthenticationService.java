@@ -1,18 +1,18 @@
 package com.acmebank.customer.auth;
 
 import com.acmebank.customer.config.JwtService;
-//import com.acmebank.customer.token.TokenType;
+import com.acmebank.customer.customer.Customer;
+import com.acmebank.customer.customer.CustomerRepository;
+import com.acmebank.customer.exception.CustomerAlreadyExistsException;
 import com.acmebank.customer.token.TokenRepository;
 import com.acmebank.customer.token.Token;
-//import com.acmebank.customer.CustomerType;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.acmebank.customer.Customer;
-import com.acmebank.customer.CustomerRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthenticationService {
@@ -23,6 +23,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new CustomerAlreadyExistsException("That email is already registered.");
+        }
+        
+        // are we registering a new consumer or comapany?
         var customer = (request.getFirstname().isEmpty() || request.getLastname().isEmpty())
                 ? new Customer(request.getEmail(), passwordEncoder.encode(request.getPassword()))
                 : new Customer(request.getFirstname(), request.getLastname(),
@@ -35,7 +40,8 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var customer = repository.findByEmail(request.getEmail()).orElseThrow();
         var token = jwtService.generateToken(customer);
         revokeAllCustomerTokens(customer);

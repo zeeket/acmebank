@@ -1,6 +1,6 @@
 package com.acmebank.customer.token;
 
-import com.acmebank.customer.Customer;
+import com.acmebank.customer.customer.Customer;
 
 import jakarta.persistence.*;
 

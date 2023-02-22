@@ -1,7 +1,5 @@
 package com.acmebank.customer.config;
 
-import com.acmebank.customer.CustomerRepository;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.acmebank.customer.customer.CustomerRepository;
 
 @Configuration
 public class ApplicationConfig {

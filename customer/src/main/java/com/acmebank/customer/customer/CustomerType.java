@@ -1,4 +1,4 @@
-package com.acmebank.customer;
+package com.acmebank.customer.customer;
 
 public enum CustomerType {
     CONSUMER,

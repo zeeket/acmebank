@@ -1,4 +1,4 @@
-package com.acmebank.customer;
+package com.acmebank.customer.customer;
 
 import java.util.List;
 import java.util.Collection;
@@ -122,11 +122,13 @@ public class Customer implements UserDetails {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.type = CustomerType.CONSUMER;
     }
 
     public Customer(final String email, final String password) {
         this.email = email;
         this.password = password;
+        this.type = CustomerType.COMPANY;
     }
 
     public Customer() {
