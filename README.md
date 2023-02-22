@@ -6,7 +6,7 @@ Bank application demo with Spring Boot Framework & Docker Compose
 - Stop the application with ``docker-compose down``
 - Remove the mounted database data directory with ``rm -rf acmebank-postgres-data``
 
-###TODO
+### TODO
 - More Exceptions for Customer Service
 - Web Service
 - Transfer Service
