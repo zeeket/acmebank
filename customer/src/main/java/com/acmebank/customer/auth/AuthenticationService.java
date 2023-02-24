@@ -7,12 +7,10 @@ import com.acmebank.customer.exception.CustomerAlreadyExistsException;
 import com.acmebank.customer.token.TokenRepository;
 import com.acmebank.customer.token.Token;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AuthenticationService {
@@ -22,7 +20,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(final RegisterRequest request) {
         if (repository.findByEmail(request.getEmail()).isPresent()) {
             throw new CustomerAlreadyExistsException("That email is already registered.");
         }
@@ -39,7 +37,7 @@ public class AuthenticationService {
         return new AuthenticationResponse(token);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(final AuthenticationRequest request) {
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var customer = repository.findByEmail(request.getEmail()).orElseThrow();
@@ -49,12 +47,17 @@ public class AuthenticationService {
         return new AuthenticationResponse(token);
     }
 
+    public boolean checkIfValidOldPassword(final String customerEmail, final String oldPassword) {
+        var customer = repository.findByEmail(customerEmail).orElseThrow();
+        return passwordEncoder.matches(oldPassword, customer.getPassword());
+    }
+
     private void saveCustomerToken(Customer customer, String token) {
         var tokenToSave = new Token(token, customer);
         tokenRepository.save(tokenToSave);
     }
 
-    private void revokeAllCustomerTokens(Customer customer) {
+    private void revokeAllCustomerTokens(final Customer customer) {
         var validCustomerTokens = tokenRepository.findAllValidTokenByCustomer(customer.getId());
         validCustomerTokens.forEach(token -> {
             token.revoke();
