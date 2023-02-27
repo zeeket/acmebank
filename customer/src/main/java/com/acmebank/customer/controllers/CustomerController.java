@@ -31,13 +31,6 @@ public class CustomerController {
   @Autowired
   private IAuthenticationFacade authenticationFacade;
 
-  @GetMapping(value = "/hello")
-  public ResponseEntity<String> sayHello() {
-    Customer customerToGreet = authenticationFacade.getLoggedInCustomer();
-    String firstName = customerToGreet.getFirstName();
-    return ResponseEntity.ok("Hello " + firstName);
-  }
-
   @PostMapping(value = "/confirmpassword")
   public ResponseEntity<ConfirmPasswordResponse> confirmPassword(@RequestBody ConfirmPasswordRequest request) {
     var customerEmail =  authenticationFacade.getAuthentication().getName();
