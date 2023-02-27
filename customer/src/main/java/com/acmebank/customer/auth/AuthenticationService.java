@@ -4,6 +4,7 @@ import com.acmebank.customer.config.JwtService;
 import com.acmebank.customer.customer.Customer;
 import com.acmebank.customer.customer.CustomerRepository;
 import com.acmebank.customer.exception.CustomerAlreadyExistsException;
+import com.acmebank.customer.exception.InvalidCredentialsException;
 import com.acmebank.customer.token.TokenRepository;
 import com.acmebank.customer.token.Token;
 
@@ -38,8 +39,11 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(final AuthenticationRequest request) {
-        authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (Exception e) {
+            throw new InvalidCredentialsException("Invalid credentials.");
+        }
         var customer = repository.findByEmail(request.getEmail()).orElseThrow();
         var token = jwtService.generateToken(customer);
         revokeAllCustomerTokens(customer);

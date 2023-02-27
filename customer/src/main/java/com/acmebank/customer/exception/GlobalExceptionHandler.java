@@ -17,4 +17,13 @@ public class GlobalExceptionHandler {
     return new ResponseEntity<ErrorDTO>(errorDTO, ex.getStatus());
   }
 
+  @ExceptionHandler(InvalidCredentialsException.class)
+  public ResponseEntity<ErrorDTO> generateInvalidCredentialsException(InvalidCredentialsException ex) {
+    ErrorDTO errorDTO = new ErrorDTO();
+    errorDTO.setMessage(ex.getMessage());
+    errorDTO.setStatus(String.valueOf(ex.getStatus().value()));
+    errorDTO.setTime(new Date().toString());
+    return new ResponseEntity<ErrorDTO>(errorDTO, ex.getStatus());
+  }
+
 }

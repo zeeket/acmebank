@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acmebank.customer.auth.AuthenticationService;
 import com.acmebank.customer.auth.ConfirmPasswordRequest;
+import com.acmebank.customer.auth.ConfirmPasswordResponse;
 import com.acmebank.customer.auth.IAuthenticationFacade;
 import com.acmebank.customer.customer.Customer;
 
@@ -38,9 +39,10 @@ public class CustomerController {
   }
 
   @PostMapping(value = "/confirmpassword")
-  public boolean confirmPassword(@RequestBody ConfirmPasswordRequest request) {
+  public ResponseEntity<ConfirmPasswordResponse> confirmPassword(@RequestBody ConfirmPasswordRequest request) {
     var customerEmail =  authenticationFacade.getAuthentication().getName();
-    return myAuthService.checkIfValidOldPassword(customerEmail, request.getPassword());
+    var correct = myAuthService.checkIfValidOldPassword(customerEmail, request.getPassword());
+    return ResponseEntity.ok(new ConfirmPasswordResponse(correct, customerEmail));
   }
 
 }
